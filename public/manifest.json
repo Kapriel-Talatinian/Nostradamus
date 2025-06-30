@@ -1,0 +1,20 @@
+{
+  "name": "Ask Nostradamus",
+  "short_name": "Nostradamus",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "description": "Prédictions mystiques sur la crypto et la bourse",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
