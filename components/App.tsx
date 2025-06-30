@@ -52,19 +52,19 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-gray-100 text-gray-800">
-      <h1 className="text-2xl font-semibold mb-4">Ask Nostradamus</h1>
+    <div className="min-h-screen flex flex-col items-center p-4 bg-gradient-to-b from-purple-800 via-indigo-800 to-blue-900 text-gray-200">
+      <h1 className="text-3xl font-bold mb-4">Ask Nostradamus</h1>
       <DjinnIllustration wishes={wishes} />
       <p className="text-sm italic mb-2">Vous avez {wishes} vœux restants aujourd'hui.</p>
       <textarea
-        className="w-full p-2 border rounded mb-2 text-gray-900"
+        className="w-full p-2 border rounded-lg mb-2 text-gray-900"
         rows={3}
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Posez votre question..."
       />
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+        className="bg-pink-500 hover:bg-pink-600 transition-colors text-white px-4 py-2 rounded-lg font-semibold disabled:opacity-50"
         onClick={ask}
         disabled={loading || wishes <= 0}
       >

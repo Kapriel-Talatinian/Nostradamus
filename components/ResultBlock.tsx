@@ -17,7 +17,7 @@ export default function ResultBlock({ text }: { text: string }) {
   if (!text) return null;
 
   return (
-    <pre className="whitespace-pre-wrap mt-4 p-4 w-full bg-white rounded shadow">
+    <pre className="whitespace-pre-wrap mt-4 p-4 w-full bg-black/70 text-green-200 rounded-lg shadow-lg border border-purple-400">
       {displayed}
     </pre>
   );
