@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import ResultBlock from './ResultBlock';
 
 export default function App() {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<{ question: string; answer: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history, loading]);
 
   const ask = async () => {
     if (!input.trim()) return;
@@ -44,17 +50,24 @@ export default function App() {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {history.map((msg, i) => (
-          <div key={i} className="space-y-1">
-            <div className="rounded-md p-3 bg-white dark:bg-[#444654]">{msg.question}</div>
+          <div key={i} className="space-y-2">
+            <div className="flex justify-end">
+              <div className="rounded-md p-3 bg-white dark:bg-[#444654] max-w-[80%]">
+                {msg.question}
+              </div>
+            </div>
             {msg.answer && (
-              <div className="rounded-md p-3 bg-gray-50 dark:bg-[#343541] whitespace-pre-wrap">{msg.answer}</div>
+              <div className="flex justify-start">
+                <ResultBlock text={msg.answer} />
+              </div>
             )}
           </div>
         ))}
         {loading && <div className="text-sm text-gray-500">Consultation...</div>}
+        <div ref={bottomRef} />
       </div>
 
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex sticky bottom-0 bg-gray-100 dark:bg-[#343541]">
         <textarea
           className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           rows={2}
@@ -72,7 +85,7 @@ export default function App() {
       </div>
 
       {showHistory && (
-        <div className="absolute inset-0 bg-black/50 flex">
+        <div className="absolute inset-0 bg-black/50 flex justify-end">
           <div className="bg-white dark:bg-gray-800 w-64 p-4 overflow-y-auto">
             <h2 className="font-bold mb-2">Historique</h2>
             {history.map((m, idx) => (
