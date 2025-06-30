@@ -1,36 +1,17 @@
-import { useEffect, useState } from 'react';
-import DjinnIllustration from './DjinnIllustration';
-import ResultBlock from './ResultBlock';
-
-const MAX_WISHES = 3;
+import { useState } from 'react';
 
 export default function App() {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState<{ question: string; answer: string }[]>([]);
   const [loading, setLoading] = useState(false);
-  const [wishes, setWishes] = useState(MAX_WISHES);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('wishesInfo');
-    if (stored) {
-      const info = JSON.parse(stored);
-      const last = new Date(info.date);
-      const now = new Date();
-      if (last.toDateString() !== now.toDateString()) {
-        setWishes(MAX_WISHES);
-        localStorage.setItem('wishesInfo', JSON.stringify({ date: now, wishes: MAX_WISHES }));
-      } else {
-        setWishes(info.wishes);
-      }
-    } else {
-      const now = new Date();
-      localStorage.setItem('wishesInfo', JSON.stringify({ date: now, wishes: MAX_WISHES }));
-    }
-  }, []);
+  const [showHistory, setShowHistory] = useState(false);
 
   const ask = async () => {
-    if (!question.trim() || wishes <= 0) return;
+    if (!input.trim()) return;
+    const question = input;
+    setInput('');
     setLoading(true);
+    setHistory((h) => [...h, { question, answer: '' }]);
     try {
       const res = await fetch('/api/ask', {
         method: 'POST',
@@ -38,41 +19,71 @@ export default function App() {
         body: JSON.stringify({ question })
       });
       const data = await res.json();
-      if (data.answer) setAnswer(data.answer);
-      const info = JSON.parse(localStorage.getItem('wishesInfo') || '{}');
-      const newWishes = (info.wishes || MAX_WISHES) - 1;
-      const now = new Date();
-      localStorage.setItem('wishesInfo', JSON.stringify({ date: now, wishes: newWishes }));
-      setWishes(newWishes);
+      setHistory((h) => {
+        const updated = [...h];
+        updated[updated.length - 1].answer = data.answer || 'Erreur';
+        return updated;
+      });
     } catch (err) {
-      setAnswer('Erreur lors de la requête.');
+      setHistory((h) => {
+        const updated = [...h];
+        updated[updated.length - 1].answer = 'Erreur lors de la requête.';
+        return updated;
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-gradient-to-b from-purple-800 via-indigo-800 to-blue-900 text-gray-200">
-      <h1 className="text-3xl font-bold mb-4">Ask Nostradamus</h1>
-      <DjinnIllustration wishes={wishes} />
-      <p className="text-sm italic mb-2">Vous avez {wishes} vœux restants aujourd'hui.</p>
-      <textarea
-        className="w-full p-2 border rounded-lg mb-2 text-gray-900"
-        rows={3}
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Posez votre question..."
-      />
-      <button
-        className="bg-pink-500 hover:bg-pink-600 transition-colors text-white px-4 py-2 rounded-lg font-semibold disabled:opacity-50"
-        onClick={ask}
-        disabled={loading || wishes <= 0}
-      >
-        {loading ? 'Consultation...' : 'Poser la question'}
-      </button>
-      {wishes <= 0 && <p className="mt-2 text-red-500">Plus de vœux aujourd'hui ! Revenez demain.</p>}
-      <ResultBlock text={answer} />
-      <p className="mt-8 text-xs text-gray-500">Ce n’est pas un conseil financier.</p>
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-[#343541] text-gray-800 dark:text-gray-100">
+      <nav className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="font-bold">Nostradamus</h1>
+        <button className="text-sm" onClick={() => setShowHistory(!showHistory)}>Historique</button>
+      </nav>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {history.map((msg, i) => (
+          <div key={i} className="space-y-1">
+            <div className="rounded-md p-3 bg-white dark:bg-[#444654]">{msg.question}</div>
+            {msg.answer && (
+              <div className="rounded-md p-3 bg-gray-50 dark:bg-[#343541] whitespace-pre-wrap">{msg.answer}</div>
+            )}
+          </div>
+        ))}
+        {loading && <div className="text-sm text-gray-500">Consultation...</div>}
+      </div>
+
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex">
+        <textarea
+          className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          rows={2}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Posez votre question..."
+        />
+        <button
+          onClick={ask}
+          disabled={loading}
+          className="ml-2 px-4 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
+        >
+          Envoyer
+        </button>
+      </div>
+
+      {showHistory && (
+        <div className="absolute inset-0 bg-black/50 flex">
+          <div className="bg-white dark:bg-gray-800 w-64 p-4 overflow-y-auto">
+            <h2 className="font-bold mb-2">Historique</h2>
+            {history.map((m, idx) => (
+              <div key={idx} className="mb-2 text-sm">
+                <p className="text-gray-600 dark:text-gray-400 truncate">{m.question}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex-1" onClick={() => setShowHistory(false)} />
+        </div>
+      )}
     </div>
   );
 }
