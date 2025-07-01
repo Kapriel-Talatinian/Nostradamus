@@ -80,20 +80,20 @@ export default function AskNostradamus() {
   };
 
   return (
-    <div className="absolute -left-20 top-1/2 -translate-y-1/2 z-10">
-      <div className="relative bg-white shadow-xl rounded-2xl max-w-md w-full p-6 pt-10 sm:pt-14 pb-10 sm:pb-12">
-        {/* Djinn Image Positioned */}
-        <div className="flex justify-center -mt-20 mb-4">
+    <div className="flex items-center justify-center min-h-screen bg-[#fefcfb] px-4 dark:bg-[#121212]">
+      <div className="relative bg-white dark:bg-[#1e1e1e] shadow-xl rounded-2xl max-w-xl w-full p-6 flex flex-col items-center">
+        {/* Djinn Image */}
+        <div className="absolute top-[-70px] z-10">
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
-            width={120}
-            height={120}
+            width={160}
+            height={160}
             className="select-none"
             priority
           />
         </div>
-
+        
         <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-2">Ask Nostradamus</h1>
         <p className="text-center text-gray-700 mb-4">
           You have <span className="font-semibold">{questionsLeft} question{questionsLeft !== 1 ? 's' : ''} remaining today.</span>
