@@ -1,7 +1,7 @@
 # 🔮 Nostradamus — Predictive Oracle for Crypto & Stocks
 
-![License](https://img.shields.io/github/license/yourname/nostradamus-app?style=for-the-badge)
-![Build](https://img.shields.io/github/actions/workflow/status/yourname/nostradamus-app/deploy.yml?style=for-the-badge)
+![License](https://img.shields.io/github/license/Kapriel-Talatinian/nostradamus?style=for-the-badge)
+![Build](https://img.shields.io/github/actions/workflow/status/Kapriel-Talatinian/nostradamus/deploy.yml?style=for-the-badge)
 ![OpenAI-Powered](https://img.shields.io/badge/OpenAI-GPT4--Turbo-blueviolet?style=for-the-badge&logo=openai)
 ![PWA Ready](https://img.shields.io/badge/PWA-Ready-0aa?style=for-the-badge&logo=pwa)
 ![Mobile](https://img.shields.io/badge/Optimized%20for-iPhone%20%26%20Mobile-lightgrey?style=for-the-badge&logo=apple)
