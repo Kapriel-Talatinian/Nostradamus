@@ -80,15 +80,15 @@ export default function AskNostradamus() {
   };
 
   return (
-    <div className="flex justify-center -mt-20 mb-4">
+    <div className="absolute -left-20 top-1/2 -translate-y-1/2 z-10">
       <div className="relative bg-white shadow-xl rounded-2xl max-w-md w-full p-6 pt-10 sm:pt-14 pb-10 sm:pb-12">
         {/* Djinn Image Positioned */}
-        <div className="absolute -left-20 top-1/2 -translate-y-1/2 z-10">
+        <div className="flex justify-center -mt-20 mb-4">
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
-            width={120}
-            height={120}
+            width={140}
+            height={140}
             className="select-none"
             priority
           />
