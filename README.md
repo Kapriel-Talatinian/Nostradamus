@@ -2,6 +2,8 @@
 
 Web app mystique prédisant les tendances crypto/bourse grâce à GPT.
 
+Cette version exploite le modèle **gpt-4o** avec des réglages proches de ceux de ChatGPT pour des réponses plus naturelles.
+
 ## Installation
 
 ```bash

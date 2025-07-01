@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function ResultBlock({ text }: { text: string }) {
   const [displayed, setDisplayed] = useState('');
@@ -18,7 +19,7 @@ export default function ResultBlock({ text }: { text: string }) {
 
   return (
     <pre className="whitespace-pre-wrap mt-4 p-4 w-full bg-black/70 text-green-200 rounded-lg shadow-lg border border-purple-400">
-      {displayed}
+      <ReactMarkdown>{displayed}</ReactMarkdown>
     </pre>
   );
 }

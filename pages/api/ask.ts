@@ -15,13 +15,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: question }
       ],
-      max_tokens: 800,
-      temperature: 0.7
+      temperature: 0.9,
+      top_p: 1,
+      presence_penalty: 0.5,
+      frequency_penalty: 0.2,
+      max_tokens: 1500
     });
 
     const answer = completion.choices[0].message?.content || '';
