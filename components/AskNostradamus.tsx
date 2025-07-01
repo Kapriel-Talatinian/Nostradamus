@@ -83,7 +83,7 @@ export default function AskNostradamus() {
     <div className="flex items-center justify-center min-h-screen bg-[#fefcfb] px-4 dark:bg-[#121212]">
       <div className="relative bg-white dark:bg-[#1e1e1e] shadow-xl rounded-2xl max-w-xl w-full p-6 flex flex-col items-center">
         {/* Djinn Image */}
-        <div className="absolute top-[-50px] z-10">
+        <div className="flex justify-center -mt-20 mb-4">
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
