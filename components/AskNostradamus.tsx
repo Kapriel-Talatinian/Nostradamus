@@ -2,15 +2,14 @@ import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 
 export default function AskNostradamus() {
-  const [question, setQuestion] = useState<string>('');
-  const [response, setResponse] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [questionsLeft, setQuestionsLeft] = useState<number>(3);
-  const [typedResponse, setTypedResponse] = useState<string>('');
-  const [history, setHistory] = useState<{ question: string; answer: string }[]>([]);
+  const [question, setQuestion] = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [questionsLeft, setQuestionsLeft] = useState(3);
+  const [typedResponse, setTypedResponse] = useState('');
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     const savedCount = localStorage.getItem('nostradamus-questions-left');
@@ -54,7 +53,7 @@ export default function AskNostradamus() {
     localStorage.setItem('nostradamus-questions-left', newCount.toString());
   };
 
-  const typeEffect = (text: string) => {
+  const typeEffect = (text) => {
     let index = 0;
     const interval = setInterval(() => {
       if (index < text.length) {
@@ -80,37 +79,39 @@ export default function AskNostradamus() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#fefcfb] px-4 py-8 sm:py-12">
-      <div className="relative bg-white shadow-xl rounded-2xl max-w-md w-full p-6 pt-10 sm:pt-14 pb-10 sm:pb-12">
-        {/* Djinn Image Positioned */}
-        <div className="absolute -left-20 top-1/2 -translate-y-1/2 z-10">
+    <div className="flex items-center justify-center min-h-screen bg-[#fefcfb] px-4 dark:bg-[#121212]">
+      <div className="relative bg-white dark:bg-[#1e1e1e] shadow-xl rounded-2xl max-w-xl w-full p-6 flex flex-col items-center">
+        {/* Djinn Image */}
+        <div className="absolute top-[-70px] z-10">
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
-            width={140}
-            height={140}
+            width={160}
+            height={160}
             className="select-none"
             priority
           />
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-2">Ask Nostradamus</h1>
-        <p className="text-center text-gray-700 mb-4">
-          You have <span className="font-semibold">{questionsLeft} question{questionsLeft !== 1 ? 's' : ''} remaining today.</span>
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2 mt-12">
+          Ask Nostradamus
+        </h1>
+        <p className="text-center text-gray-700 dark:text-gray-300 mb-6">
+          You have <span className="font-semibold">{questionsLeft} question{questionsLeft !== 1 ? 's' : ''}</span> left today.
         </p>
 
         <input
           type="text"
-          placeholder="Ask a question about any crypto or stock..."
+          placeholder="Ask about a crypto or stock..."
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          className="w-full p-4 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4"
+          className="w-full p-4 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4 dark:bg-[#2c2c2c] dark:text-white dark:border-gray-600"
         />
 
         <button
           onClick={handleSubmit}
           disabled={loading || questionsLeft <= 0}
-          className="w-full bg-purple-600 text-white text-base py-3 rounded-xl hover:bg-purple-700 transition disabled:opacity-50"
+          className="w-full bg-gray-100 text-gray-900 dark:bg-[#333] dark:text-white text-base py-3 rounded-xl border border-gray-300 hover:bg-gray-200 dark:hover:bg-[#444] transition disabled:opacity-50"
         >
           {loading ? (
             <div className="flex justify-center items-center gap-2">
@@ -123,17 +124,17 @@ export default function AskNostradamus() {
         </button>
 
         {typedResponse && (
-          <div className="mt-6 font-mono whitespace-pre-wrap text-gray-800 text-sm bg-gray-50 p-5 rounded-xl border border-gray-200 w-full">
-            {typedResponse}
+          <div className="mt-6 font-mono whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-sm bg-gray-50 dark:bg-[#2a2a2a] p-5 rounded-xl border border-gray-200 dark:border-gray-700 w-full">
+            <ReactMarkdown>{typedResponse}</ReactMarkdown>
           </div>
         )}
 
         {history.length > 0 && (
           <div className="mt-6 w-full">
-            <h2 className="text-base font-semibold mb-2 text-gray-800">Prediction History</h2>
-            <ul className="space-y-2 text-sm text-gray-700">
+            <h2 className="text-base font-semibold mb-2 text-gray-800 dark:text-white">Prediction History</h2>
+            <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
               {history.map((item, idx) => (
-                <li key={idx} className="bg-gray-50 p-3 rounded-xl border border-gray-200">
+                <li key={idx} className="bg-gray-50 dark:bg-[#2a2a2a] p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                   <strong>Q:</strong> {item.question}<br />
                   <strong>A:</strong> {item.answer.slice(0, 100)}...
                 </li>
@@ -142,7 +143,7 @@ export default function AskNostradamus() {
           </div>
         )}
 
-        <footer className="text-xs text-gray-400 mt-6 text-center">
+        <footer className="text-xs text-gray-400 mt-6 text-center dark:text-gray-500">
           ✨ This is an AI-powered prediction tool — not financial advice.
         </footer>
       </div>
