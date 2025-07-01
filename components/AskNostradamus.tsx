@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Loader2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function AskNostradamus() {
-  const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [questionsLeft, setQuestionsLeft] = useState(3);
-  const [typedResponse, setTypedResponse] = useState('');
+  const [question, setQuestion] = useState<string>('');
+  const [response, setResponse] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [questionsLeft, setQuestionsLeft] = useState<number>(3);
+  const [typedResponse, setTypedResponse] = useState<string>('');
   const [history, setHistory] = useState<{ question: string; answer: string }[]>([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
     const savedCount = localStorage.getItem('nostradamus-questions-left');
@@ -24,8 +25,13 @@ export default function AskNostradamus() {
       setQuestionsLeft(parseInt(savedCount));
     }
 
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(isDark);
+    // Detect dark mode
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkModeMediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
+    darkModeMediaQuery.addEventListener('change', listener);
+
+    return () => darkModeMediaQuery.removeEventListener('change', listener);
   }, []);
 
   const playSound = () => {
@@ -49,7 +55,10 @@ export default function AskNostradamus() {
     setResponse(data.answer);
     typeEffect(data.answer);
     playSound();
-    setHistory((prev) => [...prev, { question, answer: data.answer }]);
+    setHistory((prev: { question: string; answer: string }[]) => [
+      ...prev,
+      { question, answer: data.answer }
+    ]);
     setLoading(false);
 
     const newCount = questionsLeft - 1;
@@ -61,7 +70,7 @@ export default function AskNostradamus() {
     let index = 0;
     const interval = setInterval(() => {
       if (index < text.length) {
-        setTypedResponse((prev) => prev + text[index]);
+        setTypedResponse((prev: string) => prev + text[index]);
         index++;
       } else {
         clearInterval(interval);
@@ -82,55 +91,38 @@ export default function AskNostradamus() {
     }
   };
 
-  const bg = darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-b from-white to-gray-100 text-[#222]';
-  const card = darkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-[#222] border-gray-200';
-  const textMuted = darkMode ? 'text-gray-400' : 'text-gray-500';
-
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen ${bg} p-4`}>
-      <div className={`w-full max-w-2xl ${card} rounded-2xl shadow-xl p-6 relative overflow-hidden`}>
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="absolute left-[-60px] top-4"
-        >
+    <div className={`flex items-center justify-center min-h-screen px-4 ${isDarkMode ? 'bg-[#121212]' : 'bg-[#fefcfb]'}`}>
+      <div className={`relative ${isDarkMode ? 'bg-[#1e1e1e] text-white' : 'bg-white text-gray-900'} shadow-xl rounded-2xl max-w-xl w-full p-6 flex flex-col items-center`}>
+        {/* Djinn Image positioned over the card */}
+        <div className="absolute -left-16 top-12 z-10">
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
-            width={120}
-            height={120}
+            width={160}
+            height={160}
             className="select-none"
             priority
           />
-        </motion.div>
-
-        <div className="absolute right-4 top-4 text-yellow-400">
-          <Sparkles size={28} />
         </div>
 
-        <h1 className="text-4xl font-bold text-center mb-2">Ask Nostradamus</h1>
-        <p className={`text-center ${textMuted} mb-6`}>
+        <h1 className="text-3xl font-bold text-center mb-2">Ask Nostradamus</h1>
+        <p className="text-center mb-6">
           You have <span className="font-semibold">{questionsLeft} question{questionsLeft !== 1 ? 's' : ''} remaining today.</span>
         </p>
 
-        <div className="relative mb-4">
-          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl">🔮</span>
-          <input
-            type="text"
-            placeholder="Ask a question about any crypto or stock..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            inputMode="text"
-            autoFocus
-            className="w-full pl-10 p-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Ask a question about any crypto or stock..."
+          value={question}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
+          className="w-full p-4 text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4 text-gray-900"
+        />
 
         <button
           onClick={handleSubmit}
           disabled={loading || questionsLeft <= 0}
-          className="w-full bg-indigo-600 text-white text-lg py-3 rounded-xl hover:shadow-md hover:bg-indigo-700 transition disabled:opacity-50"
+          className="w-full bg-gray-100 text-gray-900 text-base py-3 rounded-xl border border-gray-300 hover:bg-gray-200 transition disabled:opacity-50"
         >
           {loading ? (
             <div className="flex justify-center items-center gap-2">
@@ -143,17 +135,17 @@ export default function AskNostradamus() {
         </button>
 
         {typedResponse && (
-          <div role="alert" className={`mt-8 font-mono whitespace-pre-wrap text-sm bg-gray-50 p-5 rounded-xl border ${darkMode ? 'bg-gray-700 text-white border-gray-600' : 'text-gray-800 border-gray-200'} shadow-sm`}>
+          <div className="mt-6 font-mono whitespace-pre-wrap text-sm bg-gray-50 p-5 rounded-xl border border-gray-200 w-full text-gray-800">
             {typedResponse}
           </div>
         )}
 
         {history.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-2">Prediction History</h2>
+          <div className="mt-6 w-full">
+            <h2 className="text-base font-semibold mb-2">Prediction History</h2>
             <ul className="space-y-2 text-sm">
               {history.map((item, idx) => (
-                <li key={idx} className={`p-3 rounded-xl border ${darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                <li key={idx} className="bg-gray-50 p-3 rounded-xl border border-gray-200">
                   <strong>Q:</strong> {item.question}<br />
                   <strong>A:</strong> {item.answer.slice(0, 100)}...
                 </li>
@@ -161,11 +153,11 @@ export default function AskNostradamus() {
             </ul>
           </div>
         )}
-      </div>
 
-      <footer className={`text-xs mt-6 text-center ${textMuted}`}>
-        ✨ This is an AI-powered prediction tool — not financial advice.
-      </footer>
+        <footer className="text-xs text-gray-400 mt-6 text-center">
+          ✨ This is an AI-powered prediction tool — not financial advice.
+        </footer>
+      </div>
     </div>
   );
 }
