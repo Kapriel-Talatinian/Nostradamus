@@ -87,8 +87,8 @@ export default function AskNostradamus() {
           <Image
             src={getDjinnImage()}
             alt="Djinn Nostradamus"
-            width={140}
-            height={140}
+            width={120}
+            height={120}
             className="select-none"
             priority
           />
