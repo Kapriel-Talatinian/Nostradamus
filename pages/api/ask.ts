@@ -15,7 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4-turbo',
+      tools: [{ type: 'browser' }],
+      tool_choice: 'auto',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: question }
